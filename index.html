@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#fff5ef">
+  <title>週六，把時間留給我們 ♡</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <main>
+    <header><a class="brand" href="./">♡ OUR LITTLE DATE</a><span>給最喜歡的妳</span></header>
+    <section class="intro">
+      <div class="stamp" aria-hidden="true">☾<small>you & me</small></div>
+      <p class="eyebrow">A SATURDAY JUST FOR US</p>
+      <h1>週六的空位，<br>想留在妳身邊<span>。</span></h1>
+      <p class="subtitle">一起吃點喜歡的，再把一整天的疲憊，<br>交給一個長長的擁抱。</p>
+      <div class="date-pill" id="dateLabel"></div>
+    </section>
+    <form id="dateForm">
+      <section class="card"><div class="section-title"><span class="number">01</span><span>今晚的溫柔</span><span class="tiny">CUDDLE TIME</span></div>
+        <fieldset><legend>這週六，要一起抱抱睡嗎？</legend><p>想把妳抱進懷裡，好好充電。</p>
+          <div class="choices"><label><input required type="radio" name="cuddle" value="是，一起抱抱睡"><span>♡ 好呀，一起抱抱</span></label><label><input required type="radio" name="cuddle" value="這次先不要"><span>這次先不要</span></label></div>
+        </fieldset>
+      </section>
+      <section class="card dinner"><div class="section-title"><span class="number">02</span><span>晚餐交給命運</span><span class="tiny">DINNER DATE</span></div>
+        <h2>今天，想吃點什麼？</h2><p>選不出來的時候，就讓小轉盤幫我們決定。</p>
+        <div class="wheel-wrap"><div class="pointer" aria-hidden="true">▼</div><div class="wheel" id="wheel"><span class="food food-a">🍣<b>日料</b></span><span class="food food-b">🥩<b>烤肉</b></span><span class="food food-c">🍔<b>速食</b></span></div><div class="hub" aria-hidden="true">♡</div></div>
+        <button type="button" class="spin" id="spinButton">轉一下，決定晚餐 ↻</button><p id="foodResult" class="result" role="status" aria-live="polite">日料、烤肉、速食，今晚誰出場？</p>
+      </section>
+      <section class="card"><div class="section-title"><span class="number">03</span><span>舒服最重要</span><span class="tiny">COZY NIGHT</span></div>
+        <fieldset><legend>要一起不穿睡衣睡覺嗎？</legend><p>照妳最自在的方式，隨時都可以改變心意。</p><div class="choices"><label><input required type="radio" name="sleep" value="想試試不穿睡衣"><span>♡ 好呀，想試試</span></label><label><input required type="radio" name="sleep" value="穿睡衣最舒服"><span>穿睡衣最舒服</span></label></div></fieldset>
+      </section>
+      <section class="card"><div class="section-title"><span class="number">04</span><span>今晚的親密心情</span><span class="tiny">YOUR PACE</span></div>
+        <fieldset><legend>想要多少親密時光？</legend><p>只是心情小調查，不是承諾；當下彼此都願意才算數。</p><div class="moods">
+          <label><input required type="radio" name="mood" value="0 · 只想好好睡覺"><span><b>0</b>只想好好睡覺 ☾</span></label>
+          <label><input required type="radio" name="mood" value="1 · 一次甜甜的親密"><span><b>1</b>一次甜甜的親密</span></label>
+          <label><input required type="radio" name="mood" value="2 · 兩次，看心情"><span><b>2</b>兩次，看心情</span></label>
+          <label><input required type="radio" name="mood" value="3 · 三次，慢慢來"><span><b>3</b>三次，慢慢來</span></label>
+          <label><input required type="radio" name="mood" value="4 · 想一直跟老公黏在一起"><span><b>4</b>想一直跟老公黏在一起 ♡</span></label>
+        </div></fieldset>
+      </section>
+      <p class="note">♡ 每個答案都可愛，每個選擇都會被尊重。</p>
+      <p id="formError" role="alert"></p>
+      <button class="submit" type="submit">送出我們的週六邀請 <span>↗</span></button>
+      <p class="privacy">內容只顯示在這個頁面，不會自動傳送給任何人。</p>
+    </form>
+    <section id="success" class="card success" hidden aria-live="polite"><div class="success-heart">♡</div><p class="eyebrow">IT'S A DATE</p><h2 id="successTitle" tabindex="-1">你成功預約 ♡</h2><p>把這份小小的期待，留給我們的週六。</p><dl id="summary"></dl><button type="button" id="copyButton" class="spin">複製結果，分享給另一半</button><p id="copyStatus" role="status"></p><button type="button" class="edit" id="editButton">再調整一下我的選擇</button></section>
+    <footer>MADE WITH LOVE · ONLY FOR YOU<br><span>最好的安排，是我們都喜歡的安排。</span></footer>
+  </main>
+</body>
+</html>
