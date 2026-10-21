@@ -6,6 +6,7 @@
   <meta name="theme-color" content="#fff5ef">
   <title>週六，把時間留給我們 ♡</title>
   <link rel="stylesheet" href="style.css">
+  <script src="config.js" defer></script>
   <script src="script.js" defer></script>
 </head>
 <body>
@@ -43,8 +44,13 @@
       </section>
       <p class="note">♡ 每個答案都可愛，每個選擇都會被尊重。</p>
       <p id="formError" role="alert"></p>
-      <button class="submit" type="submit">送出我們的週六邀請 <span>↗</span></button>
-      <p class="privacy">內容只顯示在這個頁面，不會自動傳送給任何人。</p>
+      <div class="data-consent">
+        <p>送出後，妳的選擇與兩題「否」的點擊次數（包含第一次點「是」之前的次數）會存到邀請人的 Google 試算表。未送出不會上傳；次數只計算本次開啟頁面，不代表妳的意願。</p>
+        <p id="clickPreview" aria-live="polite"></p>
+        <label class="consent-label"><input type="checkbox" id="dataConsent" required> 我確認上述紀錄，並同意分享給邀請人。</label>
+      </div>
+      <button class="submit" type="submit">確認分享並送出 <span>↗</span></button>
+      <p class="privacy" id="connectionStatus" role="status"></p>
     </form>
     <section id="success" class="card success" hidden aria-live="polite"><div class="success-heart">♡</div><p class="eyebrow">IT'S A DATE</p><h2 id="successTitle" tabindex="-1">你成功預約 ♡</h2><p>把這份小小的期待，留給我們的週六。</p><dl id="summary"></dl><button type="button" id="copyButton" class="spin">複製結果，分享給另一半</button><p id="copyStatus" role="status"></p><button type="button" class="edit" id="editButton">再調整一下我的選擇</button></section>
     <footer>MADE WITH LOVE · ONLY FOR YOU<br><span>最好的安排，是我們都喜歡的安排。</span></footer>

@@ -6,6 +6,37 @@ let dinner = '';
 let spinning = false;
 let rotation = 0;
 let summaryText = '';
+let sending = false;
+let retrySnapshot = '';
+let submissionId = '';
+const tracking = {
+  cuddle: { noClicks: 0, beforeFirstYes: null },
+  sleep: { noClicks: 0, beforeFirstYes: null }
+};
+const yesValues = { cuddle: '是，一起抱抱睡', sleep: '想試試不穿睡衣' };
+const countText = state => `否 ${state.noClicks} 次，首次點是之前：${state.beforeFirstYes === null ? '尚未點是' : state.beforeFirstYes + ' 次'}`;
+function updatePreview() {
+  document.querySelector('#clickPreview').textContent = `抱抱睡：${countText(tracking.cuddle)}；睡覺方式：${countText(tracking.sleep)}。`;
+}
+['cuddle', 'sleep'].forEach(name => {
+  form.querySelectorAll(`input[name="${name}"]`).forEach(input => {
+    input.addEventListener('click', () => {
+      if (sending) return;
+      const state = tracking[name];
+      if (input.value !== yesValues[name]) state.noClicks++;
+      else if (state.beforeFirstYes === null) state.beforeFirstYes = state.noClicks;
+      document.querySelector('#dataConsent').checked = false;
+      updatePreview();
+    });
+  });
+});
+form.addEventListener('change', event => {
+  if (event.target.id !== 'dataConsent') document.querySelector('#dataConsent').checked = false;
+});
+updatePreview();
+document.querySelector('#connectionStatus').textContent = window.DATE_CONFIG?.endpoint
+  ? '確認分享後送出，收到試算表寫入確認才會顯示成功。'
+  : '資料庫尚未接通，目前不會上傳資料。';
 const now = new Date();
 const saturday = new Date(now.getFullYear(), now.getMonth(), now.getDate() + (6 - now.getDay() + 7) % 7);
 const dateText = `${saturday.getFullYear()}/${String(saturday.getMonth() + 1).padStart(2, '0')}/${String(saturday.getDate()).padStart(2, '0')}（六）`;
@@ -13,6 +44,7 @@ document.querySelector('#dateLabel').textContent = `☾ ${dateText} · 我們的
 spinButton.addEventListener('click', () => {
   if (spinning) return;
   spinning = true;
+  document.querySelector('#dataConsent').checked = false;
   spinButton.disabled = true;
   document.querySelector('#foodResult').textContent = '正在挑選今晚的美味…';
   const random = new Uint32Array(1);
@@ -31,15 +63,59 @@ spinButton.addEventListener('click', () => {
     document.querySelector('#formError').textContent = '';
   }, reduced ? 0 : 3700);
 });
-form.addEventListener('submit', event => {
+form.addEventListener('submit', async event => {
   event.preventDefault();
+  if (sending) return;
   if (spinning || !dinner) {
     document.querySelector('#formError').textContent = spinning ? '等晚餐轉盤停下來，再送出吧 ♡' : '先轉一下轉盤，選好晚餐吧 ♡';
     spinButton.focus();
     return;
   }
   const data = new FormData(form);
+  if (!form.reportValidity()) return;
+  const endpoint = window.DATE_CONFIG?.endpoint || '';
+  if (!/^https:\/\/script\.google\.com\/macros\/s\/[A-Za-z0-9_-]+\/exec$/.test(endpoint)) {
+    document.querySelector('#formError').textContent = '邀請人還沒完成資料庫連線，請先告訴他；妳的選擇還在，也可以稍後再送出。';
+    return;
+  }
+  const payload = {
+    date: dateText, cuddle: data.get('cuddle'), dinner,
+    sleep: data.get('sleep'), mood: data.get('mood'), consent: true,
+    cuddleNo: tracking.cuddle.noClicks, cuddleBeforeYes: tracking.cuddle.beforeFirstYes,
+    sleepNo: tracking.sleep.noClicks, sleepBeforeYes: tracking.sleep.beforeFirstYes
+  };
+  const snapshot = JSON.stringify(payload);
+  if (snapshot !== retrySnapshot) {
+    submissionId = 'date-' + crypto.randomUUID();
+    retrySnapshot = snapshot;
+  }
+  sending = true;
+  form.inert = true;
+  const submit = form.querySelector('.submit');
+  submit.disabled = true;
+  document.querySelector('#formError').textContent = '正在儲存，請稍等…';
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 25000);
+  try {
+    const response = await fetch(endpoint, {
+      method: 'POST', body: new URLSearchParams({ payload: JSON.stringify({ ...payload, id: submissionId }) }),
+      credentials: 'omit', redirect: 'follow', signal: controller.signal
+    });
+    if (!response.ok) throw new Error('HTTP error');
+    const result = await response.json();
+    if (result.ok !== true || result.id !== submissionId) throw new Error('Write not confirmed');
+  } catch {
+    document.querySelector('#formError').textContent = '尚未取得儲存確認，請保留此頁並重試；相同內容重試不會重複新增。若持續失敗，請通知邀請人檢查部署權限。';
+    return;
+  } finally {
+    clearTimeout(timeout);
+    sending = false;
+    form.inert = false;
+    submit.disabled = false;
+  }
+  document.querySelector('#formError').textContent = '';
   const rows = [['約會日期', dateText], ['抱抱睡', data.get('cuddle')], ['晚餐', dinner], ['睡覺方式', data.get('sleep')], ['親密心情', data.get('mood')]];
+  rows.push(['抱抱睡點選紀錄', countText(tracking.cuddle)], ['睡覺方式點選紀錄', countText(tracking.sleep)], ['儲存狀態', '已收到 Google 試算表寫入確認']);
   const accepted = data.get('cuddle') === '是，一起抱抱睡';
   const title = accepted ? '你成功預約 ♡' : '你的心意已收到 ♡';
   document.querySelector('#successTitle').textContent = title;
