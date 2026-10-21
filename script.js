@@ -102,6 +102,14 @@ form.addEventListener('submit', async event => {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 25000);
   try {
+    const healthResponse = await fetch(endpoint, { credentials: 'omit', cache: 'no-store', signal: controller.signal });
+    if (!healthResponse.ok) throw new Error('Health check failed');
+    const health = await healthResponse.json();
+    if (health.service !== 'saturday-date' || health.version !== 2) {
+      const error = new Error('Outdated deployment');
+      error.code = 'OUTDATED_DEPLOYMENT';
+      throw error;
+    }
     const response = await fetch(endpoint, {
       method: 'POST', body: new URLSearchParams({ payload: JSON.stringify({ ...payload, id: submissionId }) }),
       credentials: 'omit', redirect: 'follow', signal: controller.signal
@@ -109,8 +117,10 @@ form.addEventListener('submit', async event => {
     if (!response.ok) throw new Error('HTTP error');
     const result = await response.json();
     if (result.ok !== true || result.id !== submissionId) throw new Error('Write not confirmed');
-  } catch {
-    document.querySelector('#formError').textContent = '尚未取得儲存確認，請保留此頁並重試；相同內容重試不會重複新增。若持續失敗，請通知邀請人檢查部署權限。';
+  } catch (error) {
+    document.querySelector('#formError').textContent = error.code === 'OUTDATED_DEPLOYMENT'
+      ? '邀請人尚未更新吃飯約會版的資料庫程式，請告訴他更新 Apps Script 部署；妳的選擇會留在這一頁，目前尚未送出。'
+      : '尚未取得儲存確認，請保留此頁並重試；相同內容重試不會重複新增。若持續失敗，請通知邀請人檢查部署權限。';
     return;
   } finally {
     clearTimeout(timeout);
