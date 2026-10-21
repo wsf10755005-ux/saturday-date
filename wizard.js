@@ -27,7 +27,7 @@
   }
   function renderReview() {
     const rows = [
-      ['一起吃飯',form.querySelector('input[name="meal"]:checked')?.value || '尚未選擇'],
+      ['一起抱抱睡',form.querySelector('input[name="meal"]:checked')?.value || '尚未選擇'],
       ['晚餐',document.querySelector('#foodResult').textContent],
       ['逛夜市',form.querySelector('input[name="market"]:checked')?.value || '尚未選擇'],
       ['飲料杯數',form.querySelector('input[name="drinks"]:checked')?.value || '尚未選擇']
@@ -88,8 +88,8 @@
     message.textContent = '選好就繼續我們的小約會 ♡';
     arena.after(message);
     const slogans = index === 0
-      ? ['再想一下嘛，晚餐有妳才香 ♡','我的對面幫妳留位子了 🍽️','要不要給週六一個約會名額？','轉盤已經在期待妳了 🍣']
-      : ['夜市的小吃正在揮手 👋','再想一下嘛，一起散步也很棒 ♡','還有好多攤想跟妳一起逛！','牽手逛一圈，快樂多一點 ✨'];
+      ? ['再想一下嘛 ♡','我的手已經幫你留好位置了呢 ♡','真的不要嗎? ','再給你一次機會喔']
+      : ['不要坦誠相見嗎?','再想一下嘛，很舒服耶 ♡','這樣愛愛我可以隨時讓老婆舒服，真的不要嗎?','快樂可以多一點呦 ✨'];
     let clicks = 0;
     labels[1].querySelector('input').addEventListener('click',() => {
       const button = labels[1];
