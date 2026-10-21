@@ -20,7 +20,6 @@
   const next = nav.querySelector('#nextStep');
   let step = 0;
   let dinnerDone = false;
-  let dinnerTimer;
   function answered(index) {
     if (index === 1) return dinnerDone && !document.querySelector('#spinButton').disabled;
     return Boolean(questions[index]?.querySelector('input:checked'));
@@ -43,7 +42,6 @@
     });
   }
   function show(index, focus = true) {
-    clearTimeout(dinnerTimer);
     step = Math.max(0,Math.min(pages.length - 1,index));
     pages.forEach((page,i) => page.hidden = i !== step);
     document.querySelector('#stepLabel').textContent = step < 4 ? `第 ${step + 1} 題，共 4 題` : '最後確認 · 分享我們的約定';
@@ -105,12 +103,15 @@
       next.disabled = false;
     });
   });
+  document.querySelector('#spinButton').addEventListener('click', () => {
+    dinnerDone = false;
+    next.disabled = true;
+  });
   window.DATE_WIZARD = {
     show, next:advance, isReview:() => step === 4,
     dinnerReady() {
       dinnerDone = true;
-      next.disabled = false;
-      if (step === 1) dinnerTimer = setTimeout(() => {if (step === 1) show(2);},1000);
+      next.disabled = !answered(step);
     }
   };
   show(0,false);
