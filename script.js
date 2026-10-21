@@ -10,15 +10,15 @@ let sending = false;
 let retrySnapshot = '';
 let submissionId = '';
 const tracking = {
-  cuddle: { noClicks: 0, beforeFirstYes: null },
-  sleep: { noClicks: 0, beforeFirstYes: null }
+  meal: { noClicks: 0, beforeFirstYes: null },
+  market: { noClicks: 0, beforeFirstYes: null }
 };
-const yesValues = { cuddle: '是，一起抱抱睡', sleep: '想試試不穿睡衣' };
+const yesValues = { meal: '是，一起吃飯', market: '是，一起逛夜市' };
 const countText = state => `否 ${state.noClicks} 次，首次點是之前：${state.beforeFirstYes === null ? '尚未點是' : state.beforeFirstYes + ' 次'}`;
 function updatePreview() {
-  document.querySelector('#clickPreview').textContent = `抱抱睡：${countText(tracking.cuddle)}；睡覺方式：${countText(tracking.sleep)}。`;
+  document.querySelector('#clickPreview').textContent = `一起吃飯：${countText(tracking.meal)}；逛夜市：${countText(tracking.market)}。`;
 }
-['cuddle', 'sleep'].forEach(name => {
+['meal', 'market'].forEach(name => {
   form.querySelectorAll(`input[name="${name}"]`).forEach(input => {
     input.addEventListener('click', () => {
       if (sending) return;
@@ -61,11 +61,16 @@ spinButton.addEventListener('click', () => {
     spinning = false;
     spinButton.disabled = false;
     document.querySelector('#formError').textContent = '';
+    window.DATE_WIZARD?.dinnerReady();
   }, reduced ? 0 : 3700);
 });
 form.addEventListener('submit', async event => {
   event.preventDefault();
   if (sending) return;
+  if (window.DATE_WIZARD && !window.DATE_WIZARD.isReview()) {
+    window.DATE_WIZARD.next();
+    return;
+  }
   if (spinning || !dinner) {
     document.querySelector('#formError').textContent = spinning ? '等晚餐轉盤停下來，再送出吧 ♡' : '先轉一下轉盤，選好晚餐吧 ♡';
     spinButton.focus();
@@ -79,10 +84,10 @@ form.addEventListener('submit', async event => {
     return;
   }
   const payload = {
-    date: dateText, cuddle: data.get('cuddle'), dinner,
-    sleep: data.get('sleep'), mood: data.get('mood'), consent: true,
-    cuddleNo: tracking.cuddle.noClicks, cuddleBeforeYes: tracking.cuddle.beforeFirstYes,
-    sleepNo: tracking.sleep.noClicks, sleepBeforeYes: tracking.sleep.beforeFirstYes
+    date: dateText, meal: data.get('meal'), dinner,
+    market: data.get('market'), drinks: data.get('drinks'), consent: true,
+    mealNo: tracking.meal.noClicks, mealBeforeYes: tracking.meal.beforeFirstYes,
+    marketNo: tracking.market.noClicks, marketBeforeYes: tracking.market.beforeFirstYes
   };
   const snapshot = JSON.stringify(payload);
   if (snapshot !== retrySnapshot) {
@@ -114,10 +119,9 @@ form.addEventListener('submit', async event => {
     submit.disabled = false;
   }
   document.querySelector('#formError').textContent = '';
-  const rows = [['約會日期', dateText], ['抱抱睡', data.get('cuddle')], ['晚餐', dinner], ['睡覺方式', data.get('sleep')], ['親密心情', data.get('mood')]];
-  rows.push(['抱抱睡點選紀錄', countText(tracking.cuddle)], ['睡覺方式點選紀錄', countText(tracking.sleep)], ['儲存狀態', '已收到 Google 試算表寫入確認']);
-  const accepted = data.get('cuddle') === '是，一起抱抱睡';
-  const title = accepted ? '你成功預約 ♡' : '你的心意已收到 ♡';
+  const rows = [['約會日期', dateText], ['一起吃飯', data.get('meal')], ['晚餐', dinner], ['逛夜市', data.get('market')], ['飲料杯數', data.get('drinks')]];
+  rows.push(['一起吃飯點選紀錄', countText(tracking.meal)], ['逛夜市點選紀錄', countText(tracking.market)], ['儲存狀態', '已收到 Google 試算表寫入確認']);
+  const title = '你成功預約 ♡';
   document.querySelector('#successTitle').textContent = title;
   const summary = document.querySelector('#summary');
   summary.replaceChildren();
@@ -130,7 +134,7 @@ form.addEventListener('submit', async event => {
     row.append(dt, dd);
     summary.append(row);
   });
-  summaryText = `${title}\n${rows.map(([label, value]) => `${label}：${value}`).join('\n')}\n隨時可以改變心意，當下彼此都願意才算數。`;
+  summaryText = `${title}\n${rows.map(([label, value]) => `${label}：${value}`).join('\n')}\n期待和妳一起吃吃喝喝，隨時可以調整安排。`;
   form.hidden = true;
   document.querySelector('#success').hidden = false;
   document.querySelector('#successTitle').focus();
@@ -139,7 +143,8 @@ document.querySelector('#editButton').addEventListener('click', () => {
   document.querySelector('#success').hidden = true;
   form.hidden = false;
   document.querySelector('#copyStatus').textContent = '';
-  form.querySelector('input').focus();
+  if (window.DATE_WIZARD) window.DATE_WIZARD.show(0);
+  else form.querySelector('input').focus();
 });
 document.querySelector('#copyButton').addEventListener('click', async () => {
   try {

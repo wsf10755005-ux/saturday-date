@@ -7,6 +7,7 @@
   <title>週六，把時間留給我們 ♡</title>
   <link rel="stylesheet" href="style.css">
   <script src="config.js" defer></script>
+  <script src="wizard.js" defer></script>
   <script src="script.js" defer></script>
 </head>
 <body>
@@ -16,13 +17,15 @@
       <div class="stamp" aria-hidden="true">☾<small>you & me</small></div>
       <p class="eyebrow">A SATURDAY JUST FOR US</p>
       <h1>週六的空位，<br>想留在妳身邊<span>。</span></h1>
-      <p class="subtitle">一起吃點喜歡的，再把一整天的疲憊，<br>交給一個長長的擁抱。</p>
+      <p class="subtitle">一起吃點喜歡的，再逛一圈夜市，<br>把平凡的週六，變成我們的小約會。</p>
       <div class="date-pill" id="dateLabel"></div>
     </section>
     <form id="dateForm">
-      <section class="card"><div class="section-title"><span class="number">01</span><span>今晚的溫柔</span><span class="tiny">CUDDLE TIME</span></div>
-        <fieldset><legend>這週六，要一起抱抱睡嗎？</legend><p>想把妳抱進懷裡，好好充電。</p>
-          <div class="choices"><label><input required type="radio" name="cuddle" value="是，一起抱抱睡"><span>♡ 好呀，一起抱抱</span></label><label><input required type="radio" name="cuddle" value="這次先不要"><span>這次先不要</span></label></div>
+      <p class="wizard-notice">小提醒：點選次數會先留在此頁，最後由妳確認是否分享給邀請人。</p>
+      <div class="wizard-progress"><span id="stepLabel" role="status"></span><div class="progress-track"><div id="progressFill"></div></div></div>
+      <section class="card"><div class="section-title"><span class="number">01</span><span>週六的第一個約定</span><span class="tiny">DINNER TOGETHER</span></div>
+        <fieldset><legend>這週六，要一起吃飯嗎？</legend><p>想和妳一起，把週六吃成喜歡的樣子。</p>
+          <div class="choices"><label><input required type="radio" name="meal" value="是，一起吃飯"><span>♡ 好呀，一起吃飯</span></label><label><input required type="radio" name="meal" value="這次先不要"><span>這次先不要</span></label></div>
         </fieldset>
       </section>
       <section class="card dinner"><div class="section-title"><span class="number">02</span><span>晚餐交給命運</span><span class="tiny">DINNER DATE</span></div>
@@ -30,16 +33,16 @@
         <div class="wheel-wrap"><div class="pointer" aria-hidden="true">▼</div><div class="wheel" id="wheel"><span class="food food-a">🍣<b>日料</b></span><span class="food food-b">🥩<b>烤肉</b></span><span class="food food-c">🍔<b>速食</b></span></div><div class="hub" aria-hidden="true">♡</div></div>
         <button type="button" class="spin" id="spinButton">轉一下，決定晚餐 ↻</button><p id="foodResult" class="result" role="status" aria-live="polite">日料、烤肉、速食，今晚誰出場？</p>
       </section>
-      <section class="card"><div class="section-title"><span class="number">03</span><span>舒服最重要</span><span class="tiny">COZY NIGHT</span></div>
-        <fieldset><legend>要一起不穿睡衣睡覺嗎？</legend><p>照妳最自在的方式，隨時都可以改變心意。</p><div class="choices"><label><input required type="radio" name="sleep" value="想試試不穿睡衣"><span>♡ 好呀，想試試</span></label><label><input required type="radio" name="sleep" value="穿睡衣最舒服"><span>穿睡衣最舒服</span></label></div></fieldset>
+      <section class="card"><div class="section-title"><span class="number">03</span><span>飯後散步時間</span><span class="tiny">NIGHT MARKET</span></div>
+        <fieldset><legend>吃飽後，要一起逛夜市嗎？</legend><p>邊走邊聊，再找一點好吃的小驚喜。</p><div class="choices"><label><input required type="radio" name="market" value="是，一起逛夜市"><span>♡ 好呀，牽手逛夜市</span></label><label><input required type="radio" name="market" value="這次先不逛夜市"><span>這次先不逛夜市</span></label></div></fieldset>
       </section>
-      <section class="card"><div class="section-title"><span class="number">04</span><span>今晚的親密心情</span><span class="tiny">YOUR PACE</span></div>
-        <fieldset><legend>想要多少親密時光？</legend><p>只是心情小調查，不是承諾；當下彼此都願意才算數。</p><div class="moods">
-          <label><input required type="radio" name="mood" value="0 · 只想好好睡覺"><span><b>0</b>只想好好睡覺 ☾</span></label>
-          <label><input required type="radio" name="mood" value="1 · 一次甜甜的親密"><span><b>1</b>一次甜甜的親密</span></label>
-          <label><input required type="radio" name="mood" value="2 · 兩次，看心情"><span><b>2</b>兩次，看心情</span></label>
-          <label><input required type="radio" name="mood" value="3 · 三次，慢慢來"><span><b>3</b>三次，慢慢來</span></label>
-          <label><input required type="radio" name="mood" value="4 · 想一直跟老公黏在一起"><span><b>4</b>想一直跟老公黏在一起 ♡</span></label>
+      <section class="card"><div class="section-title"><span class="number">04</span><span>飲料快樂指數</span><span class="tiny">DRINKS & JOY</span></div>
+        <fieldset><legend>今晚想喝幾杯飲料？</legend><p>從 0 到 4 杯，選一個今天的快樂份量。</p><div class="drink-options">
+          <label><input required type="radio" name="drinks" value="0 · 今天不喝飲料"><span><b>0</b>今天不喝飲料</span></label>
+          <label><input required type="radio" name="drinks" value="1 · 一杯剛剛好"><span><b>1</b>一杯剛剛好</span></label>
+          <label><input required type="radio" name="drinks" value="2 · 兩杯一起分享"><span><b>2</b>兩杯一起分享</span></label>
+          <label><input required type="radio" name="drinks" value="3 · 三杯慢慢喝"><span><b>3</b>三杯慢慢喝</span></label>
+          <label><input required type="radio" name="drinks" value="4 · 四杯快樂滿滿"><span><b>4</b>四杯快樂滿滿</span></label>
         </div></fieldset>
       </section>
       <p class="note">♡ 每個答案都可愛，每個選擇都會被尊重。</p>
